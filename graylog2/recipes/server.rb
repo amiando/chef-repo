@@ -44,19 +44,18 @@ dpkg_package "elasticsearch" do
     action :install
 end
 
-# Unpack the desired version of Graylog2 server
-execute "tar zxf graylog2-server-#{node.graylog2.server.version}.tar.gz" do
-  cwd "#{node.graylog2.basedir}/rel"
-  creates "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}/build_date"
-  action :nothing
-  subscribes :run, resources(:remote_file => "download_server"), :immediately
-end
-
 # Download the desired version of Graylog2 server from GitHub
 remote_file "download_server" do
   path "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}.tar.gz"
   source "https://github.com/downloads/Graylog2/graylog2-server/graylog2-server-#{node.graylog2.server.version}.tar.gz"
   action :create_if_missing
+end
+
+# Unpack the desired version of Graylog2 server
+execute "tar zxf graylog2-server-#{node.graylog2.server.version}.tar.gz" do
+  cwd "#{node.graylog2.basedir}/rel"
+  creates "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}/build_date"
+  action :run
 end
 
 # Link to the desired Graylog2 server version
@@ -78,8 +77,7 @@ end
 # Update the rc.d system
 execute "update-rc.d graylog2 defaults" do
   creates "/etc/rc0.d/K20graylog2"
-  action :nothing
-  subscribes :run, resources(:template => "/etc/init.d/graylog2"), :immediately
+  action :run
 end
 
 # Service resource
