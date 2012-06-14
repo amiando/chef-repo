@@ -27,7 +27,7 @@ include_recipe "apache2"
 #    here allows the use of the 'vanilla' Opscode apache2 cookbook which doesn't have a mod_passenger.rb
 #    recipe. This should be compatible with the above, since the Opscode cookbook uses apt to install
 #    apache.
-package "libapache2-mod-passenger"
+package "passenger-common1.9"
 
 # Create an Apache vhost for the Graylog2 web interface
 template "apache-vhost-conf" do
