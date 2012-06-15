@@ -81,6 +81,12 @@ execute "update-rc.d graylog2 defaults" do
 end
 
 # Service resource
+service "elasticsearch" do
+  supports :restart => true
+  action [:enable, :start]
+end
+
+# Service resource
 service "graylog2" do
   supports :restart => true
   action [:enable, :start]
