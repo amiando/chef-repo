@@ -52,7 +52,7 @@ remote_file "download_server" do
 end
 
 # Unpack the desired version of Graylog2 server
-execute "tar zxf graylog2-server-#{node.graylog2.server.version}.tar.gz" do
+execute "tar --no-same-owner -z -x -f graylog2-server-#{node.graylog2.server.version}.tar.gz" do
   cwd "#{node.graylog2.basedir}/rel"
   creates "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}/build_date"
   action :run
