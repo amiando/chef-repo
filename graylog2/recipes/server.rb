@@ -18,8 +18,9 @@
 #
 
 # Install MongoDB from 10gen repository
-include_recipe "mongodb::10gen_repo"
-include_recipe "mongodb::default"
+#include_recipe "mongodb::10gen_repo"
+#include_recipe "mongodb::default"
+package "mongodb"
 
 # Install required APT packages
 package "oracle-java7-installer"
@@ -29,8 +30,6 @@ directory "#{node.graylog2.basedir}/rel" do
   mode 0755
   recursive true
 end
-
-# Download the elasticsearch dpkg
 
 remote_file "elasticsearch_dpkg" do
     path "#{node.graylog2.basedir}/rel/elasticsearch-#{node.graylog2.elasticsearch.version}.deb"
@@ -42,6 +41,13 @@ dpkg_package "elasticsearch" do
     source "#{node.graylog2.basedir}/rel/elasticsearch-#{node.graylog2.elasticsearch.version}.deb"
     version node.graylog2.elasticsearch.version
     action :install
+end
+
+# Create elasticsearch.yml
+template "/etc/elasticsearch/elasticsearch.yml" do
+  source "elasticsearch.yml.erb"
+  mode 0644
+  notifies :restart, "service[elasticsearch]"
 end
 
 # Download the desired version of Graylog2 server from GitHub
@@ -65,6 +71,13 @@ end
 
 # Create graylog2.conf
 template "/etc/graylog2.conf" do
+  source "graylog2.conf.erb"
+  mode 0644
+end
+
+# Create graylog2-elastisearch.yml
+template "/etc/graylog2-elasticsearch.yml" do
+  source "graylog2-elasticsearch.yml.erb"
   mode 0644
 end
 

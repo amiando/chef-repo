@@ -27,12 +27,22 @@ include_recipe "apache2"
 #    here allows the use of the 'vanilla' Opscode apache2 cookbook which doesn't have a mod_passenger.rb
 #    recipe. This should be compatible with the above, since the Opscode cookbook uses apt to install
 #    apache.
-execute "passenger repo" do
-  command "add-apt-repository ppa:brightbox/ruby-ng-experimental -y"
-  command "apt-get update"
+apt_repository "rubyrepo" do
+  uri "http://ppa.launchpad.net/brightbox/ruby-ng-experimental/ubuntu"
+  distribution "precise"
+  components ["main"]
+  keyserver "hkp://keyserver.ubuntu.com:80"
+  key "C3173AA6"
+  action :add
+  notifies :run, "execute[apt-get update]", :immediately
 end
 
+#execute "ruby repo" do
+#  command "add-apt-repository ppa:brightbox/ruby-ng-experimental -y"
+#  command "apt-get update"
+#end
 package "passenger-common1.9.1"
+package "libapache2-mod-passenger"
 
 # Create an Apache vhost for the Graylog2 web interface
 template "apache-vhost-conf" do
